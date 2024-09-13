@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -76,5 +77,23 @@ public class OrderController {
         orderService.save(order);
         redirect.addFlashAttribute("message", "Cập nhật sản phẩm thành công");
         return "redirect:/";
+    }
+
+    @PostMapping("/search")
+    public String search(@PageableDefault(value = 5) Pageable pageable,
+                         @RequestParam(name="startDate") LocalDate startDate,
+                         @RequestParam(name="endDate") LocalDate endDate,
+                         Model model){
+        if(startDate.isAfter(endDate)){
+            Page<Order> orders = orderService.findAll(pageable);
+            model.addAttribute("orders", orders);
+            model.addAttribute("startDate", startDate);
+            model.addAttribute("endDate", endDate);
+            model.addAttribute("message", "Vui lòng chọn lại ngày");
+            return "/index";
+        }
+        Page<Order> orders = orderService.findAllByDate(startDate, endDate, pageable);
+        model.addAttribute("orders", orders);
+        return "/search";
     }
 }

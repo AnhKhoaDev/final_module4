@@ -30,8 +30,6 @@ public class OrderDTO implements Validator {
     @Min(value = 1, message = "Số lượng phải là số nguyên dương")
     double quantity;
 
-    double TotalPrice;
-
 
     @Override
     public boolean supports(Class<?> clazz) {
