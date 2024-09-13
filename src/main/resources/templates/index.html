@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Thống kê đơn hàng</title>
+    <meta charset="UTF-8">
+    <th:block th:replace="~{common/template::linkBootstrap}">
+    </th:block>
+</head>
+<body>
+
+<div class="container">
+    <p style="color: blue" th:text="${message}"></p>
+    <h1>Thống kê đơn hàng</h1>
+    <form action="/search" method="post">Danh sach tu <input type="date" name="startDate"> den: <input type="date"
+                                                                                                       name="endDate">
+        <button type="submit"> Xem</button>
+    </form>
+
+    <form method="get" action="/viewTop">
+        Top <input name="top" type="number" min="1"> product most order
+        <button type="submit">Xem</button>
+    </form>
+
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th>STT</th>
+            <th>Mã đơn hàng</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá(USD)</th>
+            <th>Loại sản phẩm</th>
+            <th>Ngày mua</th>
+            <th>Số lượng</th>
+            <th>Tổng tiền</th>
+            <th>Chức năng</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="order, iterStat : ${orders}">
+            <td th:text="${iterStat.count}"></td>
+            <td th:text="${order.id}"></td>
+            <td th:text="${order.product != null ? order.product.getName() : 'N/A'}"></td>
+            <td th:text="${order.product != null ? order.product.price : 'N/A'}"></td>
+            <td th:text="${order.product != null && order.product.category != null ? order.product.category.getName() : 'N/A'}"></td>
+            <td th:text="${#temporals.format(order.orderDate, 'dd/MM/yyyy')}"></td>
+            <td th:text="${order.quantity}"></td>
+            <td th:text="${order.product != null ? order.quantity * order.product.price : 'N/A'}"></td>
+            <td>
+                <a class="btn btn-warning"
+                   th:href="@{/update/{id}(id=${order.id})}">
+                    Sửa
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div>
+    <a class="btn btn-primary" th:if="${orders.hasPrevious()}"
+       th:href="@{/(page=${orders.number - 1})}">Previous</a>
+    <span th:text="${orders.number + 1}"></span> | <span th:text="${orders.totalPages}"></span>
+    <a class="btn btn-primary" th:if="${orders.hasNext()}"
+       th:href="@{/(page=${orders.number + 1})}">Next</a>
+</div>
+</body>
+
+</html>
